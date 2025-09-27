@@ -1,0 +1,18 @@
+name: "Run Code Quality Checks"
+description: "Install dependencies and run formatting, linting, type checking, and tests"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
+
+    - name: Install dependencies
+      shell: bash
+      run: bun install --frozen-lockfile --prefer-offline
+
+    - name: Run checks
+      shell: bash
+      run: bun run check

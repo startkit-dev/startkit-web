@@ -18,7 +18,7 @@
 
 ## Getting Started
 
-To get started, simply clone the repository and run `bun install`:
+To get started, simply clone the repository and run `bun run setup`:
 
 1. Clone the project or [use the template](https://github.com/new?template_owner=startkit-dev&template_name=startkit)
 
@@ -104,6 +104,139 @@ Build for production:
 
 ```sh
 bun run build
+```
+
+## Deployment
+
+This project is configured for automatic deployment to [Cloudflare Workers](https://workers.cloudflare.com/) via GitHub Actions.
+
+### GitHub Environments Setup
+
+GitHub Environments provide secure secret management and deployment protection. Create these environments in your repository settings (`Settings > Environments`):
+
+#### 1. **Production Environment**
+
+- **Name:** `production`
+- **Deployment branches:** Restrict to `main` branch only
+- **Environment variables:**
+  - `BETTER_AUTH_URL` - Your production domain (e.g., `https://startkit.example.com`)
+  - `OAUTH_GITHUB_CLIENT_ID` - Github OAuth app ID for production
+- **Environment secrets:**
+  - `BETTER_AUTH_SECRET` - Generate using `openssl rand -base64 32`
+  - `OAUTH_GITHUB_CLIENT_SECRET` - GitHub OAuth app secret for production
+- **Protection rules (recommended):**
+  - Require reviewers (1+ team members)
+  - Wait timer (optional, e.g., 5 minutes)
+
+#### 2. **Preview Environment**
+
+- **Name:** `preview`
+- **Deployment branches:** No restrictions (allows any branch)
+- **Environment variables:**
+  - `BETTER_AUTH_URL` - Auto-generated preview URL (optional override)
+  - `OAUTH_GITHUB_CLIENT_ID` - Github OAuth app secret for preview
+- **Environment secrets:**
+  - `BETTER_AUTH_SECRET` - Generate using `openssl rand -base64 32`
+  - `OAUTH_GITHUB_CLIENT_SECRET` - GitHub OAuth app secret for preview (can reuse production or create separate)
+- **Protection rules:** None (allows automatic deployments)
+
+### Required Repository Secrets
+
+Configure these secrets in your repository settings (`Settings > Secrets and variables > Actions > Repository secrets`):
+
+- `CLOUDFLARE_API_TOKEN` - Cloudflare API token with `Cloudflare Workers:Edit` and `Cloudflare D1:Edit` permissions
+- `CLOUDFLARE_ACCOUNT_ID` - Your Cloudflare account ID
+
+### Environment-Specific Configuration
+
+**Production:**
+
+- Uses `BETTER_AUTH_URL` from production environment variable
+- Uses `BETTER_AUTH_SECRET` and `OAUTH_GITHUB_CLIENT_SECRET` from production environment secrets
+- Requires manual approval if protection rules are enabled
+- Deploys to your production domain
+
+**Preview:**
+
+- Auto-generates preview URLs: `https://startkit-preview-pr-{number}.{account}.workers.dev` (unless overridden with environment variable)
+- Uses `BETTER_AUTH_SECRET` and `OAUTH_GITHUB_CLIENT_SECRET` from preview environment secrets
+- No manual approval required
+- Automatically cleaned up when PR is closed
+
+### GitHub OAuth App Configuration
+
+**For Production:**
+
+1. Create a GitHub OAuth app with your production URL as the homepage
+2. Set authorization callback URL to: `https://your-domain.com/api/auth/callback/github`
+3. Add the Client ID as `OAUTH_GITHUB_CLIENT_ID` (repository secret)
+4. Add the Client Secret as `OAUTH_GITHUB_CLIENT_SECRET` (production environment secret)
+
+**For Preview (Two Options):**
+
+**Option 1: Shared OAuth App (Simpler)**
+
+- Use the same OAuth app for both production and preview
+- Add multiple callback URLs to your OAuth app:
+  - `https://your-domain.com/api/auth/callback/github` (production)
+  - `https://startkit-preview-pr-*.{account}.workers.dev/api/auth/callback/github` (preview - add as needed)
+- Note: You'll need to manually add preview URLs to your OAuth app settings
+
+**Option 2: Separate OAuth App (Recommended for Security)**
+
+- Create a separate GitHub OAuth app specifically for preview environments
+- Set homepage URL to your repository or a placeholder
+- Swap the callback URL for preview environments as needed:
+  - `https://startkit-preview-pr-1.{account}.workers.dev/api/auth/callback/github`
+  - `https://startkit-preview-pr-2.{account}.workers.dev/api/auth/callback/github`
+  - (Add more as needed for active PRs)
+- Override `OAUTH_GITHUB_CLIENT_ID` and `OAUTH_GITHUB_CLIENT_SECRET` in preview environment
+
+**⚠️ OAuth Callback URL Limitation:**
+GitHub OAuth apps don't support wildcard callback URLs, making it unusable in preview URLs for now. We will give instructions for setting up a `proxy`.
+
+### Deployment Workflow
+
+**Pull Requests:**
+
+- Runs code quality checks (`bun run check`)
+- Creates a preview deployment with dedicated database
+- Posts preview URL in PR comments
+- Automatically cleans up preview environment when PR is closed
+
+**Main Branch:**
+
+- Runs code quality checks
+- Applies database migrations to production
+- Deploys to production Cloudflare Workers
+
+### Initial Cloudflare Setup
+
+1. **Create production database:**
+
+   ```sh
+   bunx wrangler d1 create "startkit-db"
+   ```
+
+2. **Update `wrangler.jsonc`** with your database ID from the previous step
+
+3. **Run initial migration:**
+   ```sh
+   bun run db:migrate:prod
+   ```
+
+### Manual Deployment
+
+For manual deployments:
+
+```sh
+# Deploy to production
+bun run build
+bunx wrangler deploy
+
+# Deploy with database migrations
+bun run db:migrate:prod
+bunx wrangler deploy
 ```
 
 ## Utilities

@@ -1,0 +1,187 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  push:
+    branches: [main]
+
+jobs:
+  # Check code quality on PRs and main pushes
+  check:
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/check
+
+  # Deploy preview environment on PRs
+  preview:
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    needs: check
+    runs-on: ubuntu-latest
+    environment:
+      name: preview
+      url: https://startkit-preview-pr-${{ github.event.number }}.startkit-dev.workers.dev
+    outputs:
+      preview-url: ${{ steps.deploy.outputs.deployment-url }}
+      db-name: ${{ steps.setup-db.outputs.db-name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Setup preview database and run migrations
+        id: setup-db
+        run: |
+          DB_NAME="startkit-preview-pr-${{ github.event.number }}"
+          echo "db-name=$DB_NAME" >> $GITHUB_OUTPUT
+
+          # Create preview database and capture the database ID
+          bunx wrangler d1 create "$DB_NAME" --output json > db-output.json
+          DB_ID=$(cat db-output.json | jq -r '.result.uuid')
+          echo "DB_ID=$DB_ID" >> $GITHUB_ENV
+
+          # Run migrations on preview database
+          bunx wrangler d1 migrations apply "$DB_NAME" --remote
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Build application
+        run: bun run build
+        env:
+          BETTER_AUTH_URL: ${{ vars.BETTER_AUTH_URL || format('https://startkit-preview-pr-{0}.startkit-dev.workers.dev', github.event.number) }}
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+          GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
+
+      - name: Create temporary wrangler config for preview
+        run: |
+          cat > wrangler.preview.jsonc << EOF
+          {
+            "name": "startkit-preview-pr-${{ github.event.number }}",
+            "main": "@tanstack/react-start/server-entry",
+            "compatibility_date": "2025-09-24",
+            "compatibility_flags": ["nodejs_compat"],
+            "observability": {
+              "enabled": true
+            },
+            "vars": {
+              "BETTER_AUTH_URL": "${{ vars.BETTER_AUTH_URL || format('https://startkit-preview-pr-{0}.startkit-dev.workers.dev', github.event.number) }}",
+              "GITHUB_CLIENT_ID": "${{ secrets.OAUTH_GITHUB_CLIENT_ID }}"
+            },
+            "d1_databases": [
+              {
+                "binding": "DB",
+                "database_name": "startkit-preview-pr-${{ github.event.number }}",
+                "database_id": "${{ env.DB_ID }}"
+              }
+            ]
+          }
+          EOF
+
+      - name: Deploy to Cloudflare Workers
+        id: deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --config wrangler.preview.jsonc
+
+      - name: Comment PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🚀 **Preview deployment is ready!**
+
+              **Preview URL:** ${{ steps.deploy.outputs.deployment-url }}
+              **Database:** startkit-preview-pr-${{ github.event.number }}
+
+              This preview will be automatically deleted when the PR is closed.`
+            })
+
+  # Clean up preview environment when PR is closed
+  cleanup:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete preview deployment
+        uses: cloudflare/wrangler-action@v3
+        continue-on-error: true
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: delete startkit-preview-pr-${{ github.event.number }} --force
+
+      - name: Delete preview database
+        uses: cloudflare/wrangler-action@v3
+        continue-on-error: true
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: d1 delete startkit-preview-pr-${{ github.event.number }} --force
+
+      - name: Comment PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `🧹 **Preview environment cleaned up**
+
+              The preview deployment and database for this PR have been deleted.`
+            })
+
+  # Deploy to production on main branch
+  production:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: check
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ vars.BETTER_AUTH_URL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run database migrations
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: d1 migrations apply DB --remote
+
+      - name: Build application
+        run: bun run build
+        env:
+          BETTER_AUTH_URL: ${{ vars.BETTER_AUTH_URL }}
+          BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+          GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
+
+      - name: Deploy to production
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy

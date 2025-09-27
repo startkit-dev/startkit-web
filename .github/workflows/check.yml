@@ -1,4 +1,4 @@
-name: Check
+name: Code Quality Checks
 
 on:
   push:
@@ -13,6 +13,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile --prefer-offline
-      - run: bun run check
+      - uses: ./.github/actions/check
