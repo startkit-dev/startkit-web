@@ -11,6 +11,9 @@ import tseslint from "typescript-eslint"
 
 export default tseslint.config(
   gitignore(),
+  {
+    ignores: ["worker-configuration.d.ts"]
+  },
   eslint.configs.recommended,
   tseslint.configs.recommendedTypeChecked,
   tseslint.configs.stylisticTypeChecked,

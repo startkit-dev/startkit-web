@@ -18,3 +18,6 @@ dist
 
 # Cloudflare
 .wrangler
+
+# Local settings
+*.local.json

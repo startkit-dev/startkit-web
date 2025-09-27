@@ -1,5 +1,5 @@
-name: "Run Code Quality Checks"
-description: "Install dependencies and run formatting, linting, type checking, and tests"
+name: "Setup Bun and Dependencies"
+description: "Setup Bun and install dependencies"
 
 runs:
   using: "composite"
@@ -12,7 +12,3 @@ runs:
     - name: Install dependencies
       shell: bash
       run: bun install --frozen-lockfile --prefer-offline
-
-    - name: Run checks
-      shell: bash
-      run: bun run check
