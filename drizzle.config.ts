@@ -1,16 +1,9 @@
 import { defineConfig } from "drizzle-kit"
 
-const dbUrl = process.env.DATABASE_URL!
-const dbAuthToken = process.env.DATABASE_AUTH_TOKEN!
-const dialect = dbUrl.startsWith("file:") ? "sqlite" : "turso"
-
 export default defineConfig({
-  out: "./drizzle",
+  out: "./drizzle/migrations",
   schema: "./src/db/schema.ts",
-  dialect,
-  verbose: true,
-  dbCredentials: {
-    url: dbUrl,
-    authToken: dbAuthToken
-  }
+  dialect: "sqlite",
+  driver: "d1-http",
+  verbose: true
 })

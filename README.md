@@ -5,14 +5,14 @@
 ## Features
 
 - ✅ The latest [**Tanstack Start**](https://tanstack.com/start) with react and first-class [Tanstack Query](https://tanstack.com/query) support.
-- ✅ [Rolldown-powered Vite](https://vite.dev/guide/rolldown), with [React (OXC)](https://github.com/vitejs/vite-plugin-react)
-- ✅ Tailwind CSS 4 and [shadcn/ui](https://ui.shadcn.com) preinstalled.
+- ✅ [Tailwind CSS 4](https://tailwindcss.com) and [shadcn/ui](https://ui.shadcn.com) preinstalled.
 - ✅ [Better-Auth](https://better-auth.com) authentication with GitHub OAuth provider
-- ✅ [Drizzle ORM](https://orm.drizzle.team) with SQLite (local) and [Turso](https://turso.tech) (production)
-- ✅ [Valibot](https://valibot.dev) for type-safe environment variable validation
+- ✅ [Drizzle ORM](https://orm.drizzle.team) configured for **Cloudflare D1**.
+- ✅ [Valibot](https://valibot.dev) for type-safe enforcement.
 - ✅ Type-aware linting with shared Eslint 9 configs
 - ✅ Supercharged **Prettier** (with [`@prettier/plugin-oxc`](https://github.com/prettier/prettier/tree/main/packages/plugin-oxc)) for consistent code style
 - ✅ [Bun](https://bun.sh) package manager and test runner
+- ✅ [Rolldown-powered Vite](https://vite.dev/guide/rolldown), with [React (OXC)](https://github.com/vitejs/vite-plugin-react)
 - ✅ Automatic CI with Github Actions
 - ✅ Pre-configured for [Cloudflare Workers](https://cloudflare.com) deployment
 
@@ -70,15 +70,23 @@ bun test                # Run the test suite
 
 ## Database
 
-This project uses [Drizzle ORM](https://orm.drizzle.team) with [libSQL](https://github.com/libsql/libsql), configured for SQLite in development and [Turso](https://turso.tech) in production.
+This project uses [Drizzle ORM](https://orm.drizzle.team) configured for [Cloudflare D1](https://developers.cloudflare.com/d1/) by default, but can be swapped to any database of your choosing.
 
-Database commands:
+### Database commands:
 
 ```sh
 bun run db:generate     # Generate database schema migrations
-bun run db:migrate      # Apply database migrations
+bun run db:migrate      # Apply database migrations (locally)
 bun run db:reset        # Reset database (clean + migrate)
 bun run db:studio       # Open Drizzle Studio GUI
+```
+
+### Setting up the database
+
+To create a new D1 database in production, run:
+
+```sh
+bun wrangler d1 create "startkit-db"
 ```
 
 ## Authentication

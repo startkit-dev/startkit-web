@@ -8,17 +8,13 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createServerRootRoute } from "@tanstack/react-start/server"
-
 import { Route as rootRouteImport } from "./routes/__root"
 import { Route as MainRouteImport } from "./routes/_main"
 import { Route as AuthRouteImport } from "./routes/_auth"
 import { Route as MainIndexRouteImport } from "./routes/_main/index"
+import { Route as ApiPingRouteImport } from "./routes/api/ping"
 import { Route as AuthLoginRouteImport } from "./routes/_auth/login"
-import { ServerRoute as ApiPingServerRouteImport } from "./routes/api/ping"
-import { ServerRoute as ApiAuthSplatServerRouteImport } from "./routes/api/auth/$"
-
-const rootServerRouteImport = createServerRootRoute()
+import { Route as ApiAuthSplatRouteImport } from "./routes/api/auth/$"
 
 const MainRoute = MainRouteImport.update({
   id: "/_main",
@@ -33,73 +29,63 @@ const MainIndexRoute = MainIndexRouteImport.update({
   path: "/",
   getParentRoute: () => MainRoute,
 } as any)
+const ApiPingRoute = ApiPingRouteImport.update({
+  id: "/api/ping",
+  path: "/api/ping",
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: "/login",
   path: "/login",
   getParentRoute: () => AuthRoute,
 } as any)
-const ApiPingServerRoute = ApiPingServerRouteImport.update({
-  id: "/api/ping",
-  path: "/api/ping",
-  getParentRoute: () => rootServerRouteImport,
-} as any)
-const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: "/api/auth/$",
   path: "/api/auth/$",
-  getParentRoute: () => rootServerRouteImport,
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   "/login": typeof AuthLoginRoute
+  "/api/ping": typeof ApiPingRoute
   "/": typeof MainIndexRoute
+  "/api/auth/$": typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
   "/login": typeof AuthLoginRoute
+  "/api/ping": typeof ApiPingRoute
   "/": typeof MainIndexRoute
+  "/api/auth/$": typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   "/_auth": typeof AuthRouteWithChildren
   "/_main": typeof MainRouteWithChildren
   "/_auth/login": typeof AuthLoginRoute
+  "/api/ping": typeof ApiPingRoute
   "/_main/": typeof MainIndexRoute
+  "/api/auth/$": typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: "/login" | "/"
+  fullPaths: "/login" | "/api/ping" | "/" | "/api/auth/$"
   fileRoutesByTo: FileRoutesByTo
-  to: "/login" | "/"
-  id: "__root__" | "/_auth" | "/_main" | "/_auth/login" | "/_main/"
+  to: "/login" | "/api/ping" | "/" | "/api/auth/$"
+  id:
+    | "__root__"
+    | "/_auth"
+    | "/_main"
+    | "/_auth/login"
+    | "/api/ping"
+    | "/_main/"
+    | "/api/auth/$"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   MainRoute: typeof MainRouteWithChildren
-}
-export interface FileServerRoutesByFullPath {
-  "/api/ping": typeof ApiPingServerRoute
-  "/api/auth/$": typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRoutesByTo {
-  "/api/ping": typeof ApiPingServerRoute
-  "/api/auth/$": typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRoutesById {
-  __root__: typeof rootServerRouteImport
-  "/api/ping": typeof ApiPingServerRoute
-  "/api/auth/$": typeof ApiAuthSplatServerRoute
-}
-export interface FileServerRouteTypes {
-  fileServerRoutesByFullPath: FileServerRoutesByFullPath
-  fullPaths: "/api/ping" | "/api/auth/$"
-  fileServerRoutesByTo: FileServerRoutesByTo
-  to: "/api/ping" | "/api/auth/$"
-  id: "__root__" | "/api/ping" | "/api/auth/$"
-  fileServerRoutesById: FileServerRoutesById
-}
-export interface RootServerRouteChildren {
-  ApiPingServerRoute: typeof ApiPingServerRoute
-  ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
+  ApiPingRoute: typeof ApiPingRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module "@tanstack/react-router" {
@@ -125,6 +111,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof MainIndexRouteImport
       parentRoute: typeof MainRoute
     }
+    "/api/ping": {
+      id: "/api/ping"
+      path: "/api/ping"
+      fullPath: "/api/ping"
+      preLoaderRoute: typeof ApiPingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     "/_auth/login": {
       id: "/_auth/login"
       path: "/login"
@@ -132,23 +125,12 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRoute
     }
-  }
-}
-declare module "@tanstack/react-start/server" {
-  interface ServerFileRoutesByPath {
-    "/api/ping": {
-      id: "/api/ping"
-      path: "/api/ping"
-      fullPath: "/api/ping"
-      preLoaderRoute: typeof ApiPingServerRouteImport
-      parentRoute: typeof rootServerRouteImport
-    }
     "/api/auth/$": {
       id: "/api/auth/$"
       path: "/api/auth/$"
       fullPath: "/api/auth/$"
-      preLoaderRoute: typeof ApiAuthSplatServerRouteImport
-      parentRoute: typeof rootServerRouteImport
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -176,14 +158,18 @@ const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   MainRoute: MainRouteWithChildren,
+  ApiPingRoute: ApiPingRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-const rootServerRouteChildren: RootServerRouteChildren = {
-  ApiPingServerRoute: ApiPingServerRoute,
-  ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
+
+import type { getRouter } from "./router.tsx"
+import type { createStart } from "@tanstack/react-start"
+declare module "@tanstack/react-start" {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
 }
-export const serverRouteTree = rootServerRouteImport
-  ._addFileChildren(rootServerRouteChildren)
-  ._addFileTypes<FileServerRouteTypes>()

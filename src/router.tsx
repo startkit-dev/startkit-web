@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query"
-import { createRouter as createTanStackRouter } from "@tanstack/react-router"
+import { createRouter } from "@tanstack/react-router"
 import { routerWithQueryClient } from "@tanstack/react-router-with-query"
 import { DefaultCatchBoundary } from "./components/errors/default-catch-boundary"
 import { NotFound } from "./components/errors/not-found"
@@ -9,11 +9,11 @@ import { routeTree } from "./routeTree.gen"
 // definitely end up in a more streamlined API in the future. This is just
 // to show what's possible with the current APIs.
 
-export function createRouter() {
+export function getRouter() {
   const queryClient = new QueryClient()
 
   return routerWithQueryClient(
-    createTanStackRouter({
+    createRouter({
       routeTree,
       context: { queryClient },
       defaultPreload: "intent",
@@ -26,6 +26,6 @@ export function createRouter() {
 
 declare module "@tanstack/react-router" {
   interface Register {
-    router: ReturnType<typeof createRouter>
+    router: ReturnType<typeof getRouter>
   }
 }

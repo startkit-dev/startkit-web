@@ -1,5 +1,5 @@
-import { typedEnv } from "@/env"
-import { drizzle } from "drizzle-orm/libsql"
+import { env } from "cloudflare:workers"
+import { drizzle } from "drizzle-orm/d1"
 import * as schema from "./schema"
 
 /**
@@ -14,13 +14,7 @@ import * as schema from "./schema"
  * @returns A drizzle instance for the database.
  */
 export function getDb() {
-  const { DATABASE_URL, DATABASE_AUTH_TOKEN } = typedEnv()
-
-  return drizzle({
-    connection: {
-      url: DATABASE_URL,
-      authToken: DATABASE_AUTH_TOKEN
-    },
+  return drizzle(env.DB, {
     logger: true,
     schema
   })

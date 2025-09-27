@@ -11,9 +11,10 @@ node_modules
 .nitro
 .output
 .tanstack
+dist
 
 # Claude
 .claude/*.local*
 
-# Database
-sqlite.db
+# Cloudflare
+.wrangler

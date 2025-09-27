@@ -17,7 +17,7 @@ This is a TanStack Start application with React, using Bun as the package manage
 - Bun for package management
 - TypeScript with strict configuration
 - Better-Auth for authentication with GitHub OAuth
-- Drizzle ORM with SQLite (local) and Turso (production)
+- Drizzle ORM with Cloudflare D1 SQLite database
 - Valibot for environment variable validation
 
 ## Common Commands
@@ -46,7 +46,8 @@ bun test                # Run the test suite
 
 ```bash
 bun run db:generate     # Generate database schema migrations
-bun run db:migrate      # Apply database migrations
+bun run db:migrate      # Apply database migrations (local)
+bun run db:migrate:prod # Apply database migrations (production)
 bun run db:reset        # Reset database (clean + migrate)
 bun run db:studio       # Open Drizzle Studio GUI
 ```
@@ -59,10 +60,12 @@ bun run clean           # Clean cache directories
 bun run nuke            # Clean everything including node_modules
 ```
 
-**Utilities:**
+**Setup & Utilities:**
 
 ```bash
+bun run setup           # Initial project setup (install, env, migrate)
 bun run outdated        # Check for package updates interactively
+bun run typegen         # Generate Cloudflare Worker types
 ```
 
 ## Architecture
@@ -85,13 +88,14 @@ bun run outdated        # Check for package updates interactively
 **Database & Authentication:**
 
 - `src/db/` - Database configuration and schemas
-  - `src/db/client.ts` - Drizzle database client with libSQL
+  - `src/db/client.ts` - Drizzle database client for Cloudflare D1
   - `src/db/schema.ts` - Database schema definitions
   - `src/db/schemas/auth-schema.ts` - Better-Auth schema tables
 - `src/lib/auth.ts` - Better-Auth server configuration
 - `src/lib/auth-client.ts` - Better-Auth client utilities
 - `src/env.ts` - Environment variable validation with Valibot
-- `drizzle.config.ts` - Drizzle Kit configuration (SQLite/Turso)
+- `drizzle.config.ts` - Drizzle Kit configuration for Cloudflare D1
+- `wrangler.jsonc` - Cloudflare Workers configuration with D1 binding
 
 **Configuration:**
 
@@ -107,9 +111,10 @@ bun run outdated        # Check for package updates interactively
 - Font preloading with Geist variable fonts
 - API routes in `src/routes/api/` directory
 - Better-Auth integration with GitHub OAuth provider
-- Drizzle ORM with libSQL client (supports both SQLite and Turso)
-- Environment-aware database configuration (SQLite for local, Turso for production)
+- Drizzle ORM with Cloudflare D1 SQLite database
+- Cloudflare Workers deployment target with D1 binding
 - Valibot schema validation for type-safe environment variables
+- Layout routes (`_main.tsx`, `_auth.tsx`) for route grouping
 
 ## Development Notes
 
@@ -117,8 +122,25 @@ bun run outdated        # Check for package updates interactively
 
 - Target: Cloudflare Module Workers
 - Default port: 3000
-- Uses OXC React plugin for faster compilation
+- Uses Rolldown-powered Vite with React OXC plugin for faster compilation
 - Includes TypeScript path mapping support
+- Tailwind CSS 4 integration via `@tailwindcss/vite`
+- Cloudflare plugin for SSR environment
+
+**Database Configuration:**
+
+- Drizzle ORM with Cloudflare D1 dialect
+- Migrations stored in `drizzle/migrations/`
+- D1 HTTP driver for remote database access
+- Local development uses Wrangler's local D1 database
+- Database binding configured as `DB` in `wrangler.jsonc`
+
+**Authentication Setup:**
+
+- Better-Auth with GitHub OAuth provider
+- Environment variables: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
+- Auto-generated secret via `dotkit` during setup
+- API routes handle auth at `src/routes/api/auth/$.ts`
 
 **ESLint Configuration:**
 
@@ -132,3 +154,4 @@ bun run outdated        # Check for package updates interactively
 - Uses Bun for all operations
 - Lock file: `bun.lock`
 - TypeScript and React 19 compatible
+- Setup script at `bin/setup` handles initial configuration

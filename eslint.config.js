@@ -57,6 +57,12 @@ export default tseslint.config(
             properties: false
           }
         }
+      ],
+      "import-x/no-unresolved": [
+        "error",
+        {
+          ignore: ["cloudflare:workers"]
+        }
       ]
     }
   },
