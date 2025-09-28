@@ -2,14 +2,10 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "startkit",
   "main": "@tanstack/react-start/server-entry",
-  "compatibility_date": "2025-09-24",
+  "compatibility_date": "2025-09-26",
   "compatibility_flags": ["nodejs_compat"],
   "observability": {
     "enabled": true
-  },
-  "vars": {
-    "BETTER_AUTH_URL": "https://startkit.dev",
-    "GITHUB_CLIENT_ID": "89d7575efa72f0ca87d8"
   },
   "d1_databases": [
     {
@@ -18,5 +14,20 @@
       "database_id": "0787cf91-aa72-44c7-a345-0bded2cb6c20",
       "migrations_dir": "drizzle/migrations"
     }
-  ]
+  ],
+  "preview_urls": true,
+  "workers_dev": true,
+  "env": {
+    "preview": {
+      "name": "startkit-preview",
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "startkit-preview-db",
+          "database_id": "9e987c2e-f51b-4df2-82c5-2c07141d1a9c",
+          "migrations_dir": "drizzle/migrations"
+        }
+      ]
+    }
+  }
 }

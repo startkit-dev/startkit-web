@@ -138,7 +138,7 @@ bun run typegen         # Generate Cloudflare Worker types
 **Authentication Setup:**
 
 - Better-Auth with GitHub OAuth provider
-- Environment variables: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`
+- Environment variables: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `OAUTH_GITHUB_CLIENT_ID`, `OAUTH_GITHUB_CLIENT_SECRET`
 - Auto-generated secret via `dotkit` during setup
 - API routes handle auth at `src/routes/api/auth/$.ts`
 
