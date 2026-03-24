@@ -1,3 +1,6 @@
+import { type User } from "better-auth"
+import { useCallback } from "react"
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -10,13 +13,16 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { signOut } from "@/lib/auth-client"
 import { getInitials } from "@/lib/string-fns/get-initials"
-import { type User } from "better-auth"
 
 interface Props {
   user: Pick<User, "name" | "email" | "image">
 }
 
 export function UserMenu({ user }: Props) {
+  const handleSignOut = useCallback(() => {
+    void signOut()
+  }, [])
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -39,7 +45,7 @@ export function UserMenu({ user }: Props) {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => signOut()}>Log out</DropdownMenuItem>
+          <DropdownMenuItem onClick={handleSignOut}>Log out</DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,7 +1,9 @@
+import { Link } from "@tanstack/react-router"
+
 import { ThemePicker } from "@/components/theme/theme-picker"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/auth-client"
-import { Link } from "@tanstack/react-router"
+
 import { Wordmark } from "../brand/wordmark"
 import { UserMenu } from "./user-menu"
 

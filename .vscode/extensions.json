@@ -1,8 +1,7 @@
 {
   "recommendations": [
+    "oxc.oxc-vscode",
     "bradlc.vscode-tailwindcss",
-    "dbaeumer.vscode-eslint",
-    "esbenp.prettier-vscode",
-    "qwtel.sqlite-viewer"
+    "VoidZero.vite-plus-extension-pack"
   ]
 }

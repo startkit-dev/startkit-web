@@ -1,5 +1,6 @@
-import { Wordmark } from "@/components/brand/wordmark"
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router"
+
+import { Wordmark } from "@/components/brand/wordmark"
 
 export const Route = createFileRoute("/_auth")({
   component: RouteComponent

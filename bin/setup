@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # Install the dependencies
-bun install --frozen-lockfile
+pnpm install --frozen-lockfile
 
 # Sync the .env.example file to the .env file
 dotkit sync --target .env --source .env.example
@@ -10,4 +10,4 @@ dotkit sync --target .env --source .env.example
 dotkit secret --target .env BETTER_AUTH_SECRET
 
 # Migrate the database
-bun db:migrate
+pnpm run db:migrate

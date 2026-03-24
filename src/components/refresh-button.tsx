@@ -1,6 +1,8 @@
-import { cn } from "@/lib/utils"
 import { RefreshCwIcon } from "lucide-react"
-import { useState, type ComponentProps } from "react"
+import { useCallback, useState, type ComponentProps } from "react"
+
+import { cn } from "@/lib/utils"
+
 import { Button } from "./ui/button"
 
 interface Props extends Omit<ComponentProps<typeof Button>, "onClick"> {
@@ -16,6 +18,20 @@ export function RefreshButton({
 }: Props) {
   const [isSpinning, setIsSpinning] = useState(false)
 
+  const handleClick = useCallback(() => {
+    if (isSpinning) {
+      return
+    }
+
+    setIsSpinning(true)
+    void onClick?.().then(() => {
+      setTimeout(() => {
+        setIsSpinning(false)
+      }, 600)
+      return undefined
+    })
+  }, [isSpinning, onClick])
+
   return (
     <Button
       variant={variant}
@@ -25,17 +41,7 @@ export function RefreshButton({
         className,
         isSpinning && "animate-spin-once"
       )}
-      onClick={async () => {
-        if (isSpinning) {
-          return
-        }
-
-        setIsSpinning(true)
-        await onClick?.()
-        setTimeout(() => {
-          setIsSpinning(false)
-        }, 600)
-      }}
+      onClick={handleClick}
       {...props}
     >
       <RefreshCwIcon className="size-full" />

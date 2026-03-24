@@ -1,3 +1,6 @@
+import { MoonIcon, SunIcon } from "lucide-react"
+import { useCallback } from "react"
+
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -5,11 +8,15 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
-import { MoonIcon, SunIcon } from "lucide-react"
+
 import { useTheme } from "./theme-provider"
 
 export function ThemePicker() {
   const { setTheme, theme } = useTheme()
+
+  const setLight = useCallback(() => setTheme("light"), [setTheme])
+  const setDark = useCallback(() => setTheme("dark"), [setTheme])
+  const setSystem = useCallback(() => setTheme("system"), [setTheme])
 
   return (
     <DropdownMenu>
@@ -27,25 +34,19 @@ export function ThemePicker() {
       <DropdownMenuContent align="end">
         <DropdownMenuCheckboxItem
           checked={theme === "light"}
-          onCheckedChange={() => {
-            setTheme("light")
-          }}
+          onCheckedChange={setLight}
         >
           Light
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
           checked={theme === "dark"}
-          onCheckedChange={() => {
-            setTheme("dark")
-          }}
+          onCheckedChange={setDark}
         >
           Dark
         </DropdownMenuCheckboxItem>
         <DropdownMenuCheckboxItem
           checked={theme === "system"}
-          onCheckedChange={() => {
-            setTheme("system")
-          }}
+          onCheckedChange={setSystem}
         >
           System
         </DropdownMenuCheckboxItem>
