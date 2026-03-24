@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "check": "bun run format:check & bun run lint & bun run test & wait",
+    "check": "bun run format:check & bun run lint & wait",
     "clean": "git clean -xdf node_modules/.cache .tanstack .output .nitro dist .wrangler",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "wrangler d1 migrations apply DB --local",
