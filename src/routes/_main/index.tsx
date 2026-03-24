@@ -36,14 +36,17 @@ function RouteComponent() {
         </ol>
 
         <div className="flex flex-col items-center gap-4 sm:flex-row">
-          <Button variant="secondary" asChild>
-            <a
-              href="https://tanstack.com/router/latest/docs/framework/react/start/overview"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Documentation
-            </a>
+          <Button
+            variant="secondary"
+            render={
+              <a
+                href="https://tanstack.com/router/latest/docs/framework/react/start/overview"
+                rel="noopener noreferrer"
+                target="_blank"
+              />
+            }
+          >
+            Documentation
           </Button>
         </div>
 

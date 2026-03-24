@@ -43,6 +43,7 @@ export default defineConfig({
     },
     rules: {
       "react/react-in-jsx-scope": "off",
+      "react-perf/jsx-no-jsx-as-prop": "off",
       "typescript/no-explicit-any": "error",
       "typescript/no-misused-promises": "warn"
     },

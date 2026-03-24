@@ -20,16 +20,18 @@ export function ThemePicker() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          size="icon"
-          variant="ghost"
-          className="size-8 p-0 focus-visible:ring-0"
-        >
-          <SunIcon className="size-4 dark:hidden" />
-          <MoonIcon className="hidden size-4 dark:block" />
-          <span className="sr-only">Toggle theme</span>
-        </Button>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            size="icon"
+            variant="ghost"
+            className="size-8 p-0 focus-visible:ring-0"
+          />
+        }
+      >
+        <SunIcon className="size-4 dark:hidden" />
+        <MoonIcon className="hidden size-4 dark:block" />
+        <span className="sr-only">Toggle theme</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuCheckboxItem
