@@ -25,7 +25,8 @@
     "typescript/no-misused-promises": "warn"
   },
   "options": {
-    "typeAware": true
+    "typeAware": true,
+    "typeCheck": true
   },
   "overrides": [
     {
