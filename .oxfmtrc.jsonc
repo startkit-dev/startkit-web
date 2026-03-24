@@ -10,5 +10,5 @@
   "sortPackageJson": true,
   "sortTsconfig": true,
   "sortTailwindConfig": true,
-  "ignorePatterns": []
+  "ignorePatterns": ["**/*.d.ts", "**/*.gen.ts"]
 }

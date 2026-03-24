@@ -9,52 +9,52 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from "./routes/__root"
-import { Route as AuthRouteImport } from "./routes/_auth"
-import { Route as AuthLoginRouteImport } from "./routes/_auth/login"
 import { Route as MainRouteImport } from "./routes/_main"
+import { Route as AuthRouteImport } from "./routes/_auth"
 import { Route as MainIndexRouteImport } from "./routes/_main/index"
-import { Route as ApiAuthSplatRouteImport } from "./routes/api/auth/$"
 import { Route as ApiPingRouteImport } from "./routes/api/ping"
+import { Route as AuthLoginRouteImport } from "./routes/_auth/login"
+import { Route as ApiAuthSplatRouteImport } from "./routes/api/auth/$"
 
 const MainRoute = MainRouteImport.update({
   id: "/_main",
-  getParentRoute: () => rootRouteImport
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
   id: "/_auth",
-  getParentRoute: () => rootRouteImport
+  getParentRoute: () => rootRouteImport,
 } as any)
 const MainIndexRoute = MainIndexRouteImport.update({
   id: "/",
   path: "/",
-  getParentRoute: () => MainRoute
+  getParentRoute: () => MainRoute,
 } as any)
 const ApiPingRoute = ApiPingRouteImport.update({
   id: "/api/ping",
   path: "/api/ping",
-  getParentRoute: () => rootRouteImport
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: "/login",
   path: "/login",
-  getParentRoute: () => AuthRoute
+  getParentRoute: () => AuthRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: "/api/auth/$",
   path: "/api/auth/$",
-  getParentRoute: () => rootRouteImport
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
+  "/": typeof MainIndexRoute
   "/login": typeof AuthLoginRoute
   "/api/ping": typeof ApiPingRoute
-  "/": typeof MainIndexRoute
   "/api/auth/$": typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
+  "/": typeof MainIndexRoute
   "/login": typeof AuthLoginRoute
   "/api/ping": typeof ApiPingRoute
-  "/": typeof MainIndexRoute
   "/api/auth/$": typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
@@ -68,9 +68,9 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: "/login" | "/api/ping" | "/" | "/api/auth/$"
+  fullPaths: "/" | "/login" | "/api/ping" | "/api/auth/$"
   fileRoutesByTo: FileRoutesByTo
-  to: "/login" | "/api/ping" | "/" | "/api/auth/$"
+  to: "/" | "/login" | "/api/ping" | "/api/auth/$"
   id:
     | "__root__"
     | "/_auth"
@@ -93,14 +93,14 @@ declare module "@tanstack/react-router" {
     "/_main": {
       id: "/_main"
       path: ""
-      fullPath: ""
+      fullPath: "/"
       preLoaderRoute: typeof MainRouteImport
       parentRoute: typeof rootRouteImport
     }
     "/_auth": {
       id: "/_auth"
       path: ""
-      fullPath: ""
+      fullPath: "/"
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -140,7 +140,7 @@ interface AuthRouteChildren {
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
-  AuthLoginRoute: AuthLoginRoute
+  AuthLoginRoute: AuthLoginRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
@@ -150,7 +150,7 @@ interface MainRouteChildren {
 }
 
 const MainRouteChildren: MainRouteChildren = {
-  MainIndexRoute: MainIndexRoute
+  MainIndexRoute: MainIndexRoute,
 }
 
 const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)
@@ -159,15 +159,14 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   MainRoute: MainRouteWithChildren,
   ApiPingRoute: ApiPingRoute,
-  ApiAuthSplatRoute: ApiAuthSplatRoute
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
 
-import type { createStart } from "@tanstack/react-start"
-
 import type { getRouter } from "./router.tsx"
+import type { createStart } from "@tanstack/react-start"
 declare module "@tanstack/react-start" {
   interface Register {
     ssr: true
