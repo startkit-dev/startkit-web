@@ -1,4 +1,4 @@
-/// <reference types="vite/client" />
+/// <reference types="vite-plus/client" />
 // eslint-disable-next-line import/no-unassigned-import -- side-effect: registers font
 import "@fontsource-variable/geist"
 // eslint-disable-next-line import/no-unassigned-import -- side-effect: registers font
