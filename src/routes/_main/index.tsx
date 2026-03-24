@@ -1,12 +1,13 @@
+import { useSuspenseQuery } from "@tanstack/react-query"
+import { createFileRoute } from "@tanstack/react-router"
+import { Suspense } from "react"
+
 import { Wordmark } from "@/components/brand/wordmark"
 import { RefreshButton } from "@/components/refresh-button"
 import { Button } from "@/components/ui/button"
 import { serverTimeQueryOptions } from "@/lib/query-options/server-time-options"
 import { usersCountQueryOptions } from "@/lib/query-options/users-count-options"
 import { seo } from "@/lib/seo"
-import { useSuspenseQuery } from "@tanstack/react-query"
-import { createFileRoute } from "@tanstack/react-router"
-import { Suspense } from "react"
 
 export const Route = createFileRoute("/_main/")({
   head: () => {
@@ -35,14 +36,17 @@ function RouteComponent() {
         </ol>
 
         <div className="flex flex-col items-center gap-4 sm:flex-row">
-          <Button variant="secondary" asChild>
-            <a
-              href="https://tanstack.com/router/latest/docs/framework/react/start/overview"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Documentation
-            </a>
+          <Button
+            variant="secondary"
+            render={
+              <a
+                href="https://tanstack.com/router/latest/docs/framework/react/start/overview"
+                rel="noopener noreferrer"
+                target="_blank"
+              />
+            }
+          >
+            Documentation
           </Button>
         </div>
 

@@ -1,7 +1,11 @@
 import { Link } from "@tanstack/react-router"
-import { type PropsWithChildren } from "react"
+import { type PropsWithChildren, useCallback } from "react"
 
 export function NotFound({ children }: Readonly<PropsWithChildren>) {
+  const handleGoBack = useCallback(() => {
+    window.history.back()
+  }, [])
+
   return (
     <div className="space-y-2 p-2">
       <div className="text-gray-600 dark:text-gray-400">
@@ -9,7 +13,7 @@ export function NotFound({ children }: Readonly<PropsWithChildren>) {
       </div>
       <p className="flex flex-wrap items-center gap-2">
         <button
-          onClick={() => window.history.back()}
+          onClick={handleGoBack}
           className="rounded bg-emerald-500 px-2 py-1 text-sm font-black text-white uppercase"
         >
           Go back

@@ -1,4 +1,5 @@
-import { describe, expect, test } from "bun:test"
+import { describe, expect, test } from "vite-plus/test"
+
 import { getInitials } from "./get-initials"
 
 const testNames = [

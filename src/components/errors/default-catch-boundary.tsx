@@ -6,6 +6,7 @@ import {
   useRouter,
   type ErrorComponentProps
 } from "@tanstack/react-router"
+import { useCallback } from "react"
 
 export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
   const router = useRouter()
@@ -16,14 +17,21 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
 
   console.error(error)
 
+  const handleRetry = useCallback(() => {
+    void router.invalidate()
+  }, [router])
+
+  const handleGoBack = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    window.history.back()
+  }, [])
+
   return (
     <div className="flex min-w-0 flex-1 flex-col items-center justify-center gap-6 p-4">
       <ErrorComponent error={error} />
       <div className="flex flex-wrap items-center gap-2">
         <button
-          onClick={async () => {
-            await router.invalidate()
-          }}
+          onClick={handleRetry}
           className={`rounded-sm bg-gray-600 px-2 py-1 font-extrabold text-white uppercase dark:bg-gray-700`}
         >
           Try Again
@@ -39,10 +47,7 @@ export function DefaultCatchBoundary({ error }: ErrorComponentProps) {
           <Link
             to="/"
             className={`rounded-sm bg-gray-600 px-2 py-1 font-extrabold text-white uppercase dark:bg-gray-700`}
-            onClick={(e) => {
-              e.preventDefault()
-              window.history.back()
-            }}
+            onClick={handleGoBack}
           >
             Go Back
           </Link>

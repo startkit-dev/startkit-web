@@ -1,6 +1,7 @@
+import { type SVGProps } from "react"
+
 import { siteConfig } from "@/config/site-config"
 import { cn } from "@/lib/utils"
-import { type SVGProps } from "react"
 
 interface Props extends SVGProps<SVGSVGElement> {}
 

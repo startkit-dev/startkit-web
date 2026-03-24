@@ -1,6 +1,7 @@
+import { Link } from "@tanstack/react-router"
+
 import { siteConfig } from "@/config/site-config"
 import { cn } from "@/lib/utils"
-import { Link } from "@tanstack/react-router"
 
 const hostingProviders = {
   vercel: {

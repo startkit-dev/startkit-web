@@ -1,8 +1,9 @@
-import { getDb } from "@/db/client"
-import { usersTable } from "@/db/schema"
 import { queryOptions } from "@tanstack/react-query"
 import { createServerFn } from "@tanstack/react-start"
 import { count } from "drizzle-orm"
+
+import { getDb } from "@/db/client"
+import { usersTable } from "@/db/schema"
 
 const getUsersCount = createServerFn().handler(async () => {
   const db = getDb()
@@ -23,7 +24,7 @@ export const usersCountQueryOptions = () =>
   queryOptions({
     queryKey: ["users-count"],
     queryFn: async () => {
-      const count = await getUsersCount()
-      return count
+      const usersCount = await getUsersCount()
+      return usersCount
     }
   })
