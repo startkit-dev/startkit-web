@@ -1,12 +1,6 @@
 /// <reference types="vite/client" />
 import "@fontsource-variable/geist"
 import "@fontsource-variable/geist-mono"
-import { Devtools } from "@/components/dev/devtools"
-import { DefaultCatchBoundary } from "@/components/errors/default-catch-boundary"
-import { NotFound } from "@/components/errors/not-found"
-import { ThemeProvider } from "@/components/theme/theme-provider"
-import { seo } from "@/lib/seo"
-import styles from "@/styles/app.css?url"
 import monoFont from "@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url"
 import { type QueryClient } from "@tanstack/react-query"
 import {
@@ -16,6 +10,14 @@ import {
   Scripts
 } from "@tanstack/react-router"
 import { type PropsWithChildren } from "react"
+
+import { Devtools } from "@/components/dev/devtools"
+import { DefaultCatchBoundary } from "@/components/errors/default-catch-boundary"
+import { NotFound } from "@/components/errors/not-found"
+import { ThemeProvider } from "@/components/theme/theme-provider"
+import { seo } from "@/lib/seo"
+
+import styles from "@/styles/app.css?url"
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient

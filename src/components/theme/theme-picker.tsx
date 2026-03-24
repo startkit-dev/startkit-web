@@ -1,3 +1,5 @@
+import { MoonIcon, SunIcon } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -5,7 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
-import { MoonIcon, SunIcon } from "lucide-react"
+
 import { useTheme } from "./theme-provider"
 
 export function ThemePicker() {

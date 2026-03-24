@@ -4,15 +4,21 @@
 
 ## Features
 
-- ✅ The latest [**Tanstack Start**](https://tanstack.com/start) with react and first-class [Tanstack Query](https://tanstack.com/query) support.
-- ✅ [Tailwind CSS 4](https://tailwindcss.com) and [shadcn/ui](https://ui.shadcn.com) preinstalled.
-- ✅ [Better-Auth](https://better-auth.com) authentication with GitHub OAuth provider
+- ✅ The latest [**Tanstack Start**](https://tanstack.com/start) with react and
+  first-class [Tanstack Query](https://tanstack.com/query) support.
+- ✅ [Tailwind CSS 4](https://tailwindcss.com) and
+  [shadcn/ui](https://ui.shadcn.com) preinstalled.
+- ✅ [Better-Auth](https://better-auth.com) authentication with GitHub OAuth
+  provider
 - ✅ [Drizzle ORM](https://orm.drizzle.team) configured for **Cloudflare D1**.
 - ✅ [Valibot](https://valibot.dev) for type-safe enforcement.
-- ✅ Type-aware linting with shared Eslint 9 configs
-- ✅ Supercharged **Prettier** (with [`@prettier/plugin-oxc`](https://github.com/prettier/prettier/tree/main/packages/plugin-oxc)) for consistent code style
+- ✅ [OxLint](https://oxc.rs/docs/guide/usage/linter) for fast, type-aware
+  linting
+- ✅ [OxFmt](https://oxc.rs/docs/guide/usage/formatter) for consistent code
+  formatting
 - ✅ [Bun](https://bun.sh) package manager and test runner
-- ✅ [Rolldown-powered Vite](https://vite.dev/guide/rolldown), with [React (OXC)](https://github.com/vitejs/vite-plugin-react)
+- ✅ [Rolldown-powered Vite](https://vite.dev/guide/rolldown), with
+  [React (OXC)](https://github.com/vitejs/vite-plugin-react)
 - ✅ Automatic CI with Github Actions
 - ✅ Pre-configured for [Cloudflare Workers](https://cloudflare.com) deployment
 
@@ -20,7 +26,8 @@
 
 To get started, simply clone the repository and run `bun run setup`:
 
-1. Clone the project or [use the template](https://github.com/new?template_owner=startkit-dev&template_name=startkit)
+1. Clone the project or
+   [use the template](https://github.com/new?template_owner=startkit-dev&template_name=startkit)
 
 ```sh
 npx gitpick startkit-dev/startkit my-app
@@ -33,7 +40,8 @@ cd my-app
 bun run setup
 ```
 
-This script (located in `./bin/setup`) will install the dependencies, set up your local .env file, and migrate the database.
+This script (located in `./bin/setup`) will install the dependencies, set up
+your local .env file, and migrate the database.
 
 ## Development
 
@@ -60,9 +68,9 @@ bun run fix
 Individual commands:
 
 ```sh
-bun run format          # Format code with Prettier
+bun run format          # Format code with oxfmt
 bun run format:check    # Check formatting without fixing
-bun run lint            # Lint code with ESLint
+bun run lint            # Lint code with oxlint
 bun run lint:fix        # Auto-fix linting issues
 bun run typecheck       # Run TypeScript type checking
 bun test                # Run the test suite
@@ -70,7 +78,9 @@ bun test                # Run the test suite
 
 ## Database
 
-This project uses [Drizzle ORM](https://orm.drizzle.team) configured for [Cloudflare D1](https://developers.cloudflare.com/d1/) by default, but can be swapped to any database of your choosing.
+This project uses [Drizzle ORM](https://orm.drizzle.team) configured for
+[Cloudflare D1](https://developers.cloudflare.com/d1/) by default, but can be
+swapped to any database of your choosing.
 
 ### Database commands:
 
@@ -108,7 +118,8 @@ bun run build
 
 ## Deployment
 
-This project is pre-configured for automatic deployment to Cloudflare Workers with unique preview URLs for each pull request.
+This project is pre-configured for automatic deployment to Cloudflare Workers
+with unique preview URLs for each pull request.
 
 📖 **[See detailed deployment guide →](docs/deploy.md)**
 

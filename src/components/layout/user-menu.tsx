@@ -1,3 +1,5 @@
+import { type User } from "better-auth"
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -10,7 +12,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { signOut } from "@/lib/auth-client"
 import { getInitials } from "@/lib/string-fns/get-initials"
-import { type User } from "better-auth"
 
 interface Props {
   user: Pick<User, "name" | "email" | "image">

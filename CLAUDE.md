@@ -1,10 +1,13 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with
+code in this repository.
 
 ## Project Overview
 
-This is a TanStack Start application with React, using Bun as the package manager. The project is configured for Cloudflare Workers deployment and includes a comprehensive modern toolchain.
+This is a TanStack Start application with React, using Bun as the package
+manager. The project is configured for Cloudflare Workers deployment and
+includes a comprehensive modern toolchain.
 
 **Key Technologies:**
 
@@ -34,9 +37,9 @@ bun start               # Start production server
 ```bash
 bun run check           # Run all checks (format, lint, typecheck, tests)
 bun run fix             # Auto-fix formatting and linting issues
-bun run format          # Format code with Prettier
+bun run format          # Format code with oxfmt
 bun run format:check    # Check code formatting
-bun run lint            # Lint code with ESLint
+bun run lint            # Lint code with oxlint
 bun run lint:fix        # Auto-fix linting issues
 bun run typecheck       # Run TypeScript type checking
 bun test                # Run the test suite
@@ -74,7 +77,8 @@ bun run typegen         # Generate Cloudflare Worker types
 
 - File-based routing with `src/routes/` directory
 - Route tree auto-generated in `src/routeTree.gen.ts`
-- Root route in `src/routes/__root.tsx` includes global providers and error boundaries
+- Root route in `src/routes/__root.tsx` includes global providers and error
+  boundaries
 - Router configured with TanStack Query integration in `src/router.tsx`
 
 **Component Organization:**
@@ -138,16 +142,16 @@ bun run typegen         # Generate Cloudflare Worker types
 **Authentication Setup:**
 
 - Better-Auth with GitHub OAuth provider
-- Environment variables: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `OAUTH_GITHUB_CLIENT_ID`, `OAUTH_GITHUB_CLIENT_SECRET`
+- Environment variables: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`,
+  `OAUTH_GITHUB_CLIENT_ID`, `OAUTH_GITHUB_CLIENT_SECRET`
 - Auto-generated secret via `dotkit` during setup
 - API routes handle auth at `src/routes/api/auth/$.ts`
 
-**ESLint Configuration:**
+**Linting & Formatting:**
 
-- Flat config format with TypeScript integration
-- TanStack Router plugin enabled
-- Import/export linting with TypeScript resolver
-- Prettier integration for consistent formatting
+- OxLint for fast linting (configured in `.oxlintrc.json`)
+- OxFmt for code formatting (configured in `.oxfmtrc.jsonc`)
+- Both powered by the OXC toolchain for speed
 
 **Package Manager:**
 

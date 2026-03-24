@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test"
+
 import { getInitials } from "./get-initials"
 
 const testNames = [

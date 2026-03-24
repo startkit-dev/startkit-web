@@ -1,7 +1,8 @@
-import { type ApiResponse } from "@/lib/api-fns/api-response"
 import { createFileRoute } from "@tanstack/react-router"
 import { json } from "@tanstack/react-start"
 import { env } from "cloudflare:workers"
+
+import { type ApiResponse } from "@/lib/api-fns/api-response"
 
 export const Route = createFileRoute("/api/ping")({
   server: {

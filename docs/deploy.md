@@ -1,12 +1,20 @@
 # Deployment
 
-This project is configured for automatic deployment to [Cloudflare Workers](https://workers.cloudflare.com/) via GitHub Actions using Cloudflare's preview_urls for clean preview deployments.
+This project is configured for automatic deployment to
+[Cloudflare Workers](https://workers.cloudflare.com/) via GitHub Actions using
+Cloudflare's preview_urls for clean preview deployments.
 
 ## Known Limitations
 
-- To deploy a preview version of an worker, Cloudflare requires you to deploy via `wrangler deploy` at least one time first to set everything up. You can do this locally by running `CLOUDFLARE_ENV=preview bun run build; bun wrangler deploy`.
-- Secrets upload for preview environments is not working as expected with the cloudflare vite plugin. Secrets should be set manually as well.
-- Cloudflare D1 databases don't work seamlessly with preview worker deployments. We will add logic to create and cleanup per-branch D1 databases, but for now we have a single, shared preview DB URL.
+- To deploy a preview version of an worker, Cloudflare requires you to deploy
+  via `wrangler deploy` at least one time first to set everything up. You can do
+  this locally by running
+  `CLOUDFLARE_ENV=preview bun run build; bun wrangler deploy`.
+- Secrets upload for preview environments is not working as expected with the
+  cloudflare vite plugin. Secrets should be set manually as well.
+- Cloudflare D1 databases don't work seamlessly with preview worker deployments.
+  We will add logic to create and cleanup per-branch D1 databases, but for now
+  we have a single, shared preview DB URL.
 
 ## Prerequisites
 
@@ -26,14 +34,18 @@ Update `wrangler.jsonc` with the database IDs returned from these commands.
 
 ### 2. Required GitHub Secrets
 
-Configure these secrets in your GitHub repository settings (`Settings > Secrets and variables > Actions > Repository secrets`):
+Configure these secrets in your GitHub repository settings
+(`Settings > Secrets and variables > Actions > Repository secrets`):
 
-- `CLOUDFLARE_API_TOKEN` - Cloudflare API token with `Cloudflare Workers:Edit` and `Cloudflare D1:Edit` permissions
+- `CLOUDFLARE_API_TOKEN` - Cloudflare API token with `Cloudflare Workers:Edit`
+  and `Cloudflare D1:Edit` permissions
 - `CLOUDFLARE_ACCOUNT_ID` - Your Cloudflare account ID
 
 ### 3. GitHub Environments Setup
 
-GitHub Environments provide secure secret management and deployment protection. Create these environments in your repository settings (`Settings > Environments`):
+GitHub Environments provide secure secret management and deployment protection.
+Create these environments in your repository settings
+(`Settings > Environments`):
 
 #### Production Environment
 
@@ -67,7 +79,9 @@ GitHub Environments provide secure secret management and deployment protection. 
 **Workflow:** `.github/workflows/preview.yml`
 
 - Runs code quality checks (`bun run check`)
-- Creates a preview deployment with unique URL: `https://pr-{number}-startkit-preview.blendist.workers.dev` (replace `blendist` with your Workers subdomain)
+- Creates a preview deployment with unique URL:
+  `https://pr-{number}-startkit-preview.blendist.workers.dev` (replace
+  `blendist` with your Workers subdomain)
 - Uses shared preview database for all PRs
 - Posts preview URL in PR comments (updates same comment on each run)
 - Preview deployments automatically expire and clean up
@@ -87,21 +101,28 @@ GitHub Environments provide secure secret management and deployment protection. 
 ### For Production
 
 1. Create a GitHub OAuth app with your production URL as the homepage
-1. Set authorization callback URL to: `https://startkit.dev/api/auth/callback/github`
+1. Set authorization callback URL to:
+   `https://startkit.dev/api/auth/callback/github`
 1. Add the Client ID as `OAUTH_GITHUB_CLIENT_ID` (environment variable)
-1. Add the Client Secret as `OAUTH_GITHUB_CLIENT_SECRET` (production environment secret)
+1. Add the Client Secret as `OAUTH_GITHUB_CLIENT_SECRET` (production environment
+   secret)
 
 ### For Preview (Recommended Setup)
 
 **Create a Separate Preview OAuth App:**
 
 1. Create a separate GitHub OAuth app specifically for preview environments
-1. Set the authorization callback URL to your Cloudflare account subdomain (e.g., `https://blendist.workers.dev/api/auth/callback/github`)
-1. Override `OAUTH_GITHUB_CLIENT_ID` and `OAUTH_GITHUB_CLIENT_SECRET` in the preview environment
+1. Set the authorization callback URL to your Cloudflare account subdomain
+   (e.g., `https://blendist.workers.dev/api/auth/callback/github`)
+1. Override `OAUTH_GITHUB_CLIENT_ID` and `OAUTH_GITHUB_CLIENT_SECRET` in the
+   preview environment
 
 **✅ Preview aliases work automatically:**
 
-GitHub allows any subdomain of the registered host, so callback URLs like `https://pr-{number}-startkit-preview.blendist.workers.dev/api/auth/callback/github` (replace `blendist` with your Workers subdomain) redirect successfully without manual updates.
+GitHub allows any subdomain of the registered host, so callback URLs like
+`https://pr-{number}-startkit-preview.blendist.workers.dev/api/auth/callback/github`
+(replace `blendist` with your Workers subdomain) redirect successfully without
+manual updates.
 
 ## Manual Deployment
 
@@ -128,8 +149,14 @@ Uses Cloudflare's versioning system instead of creating separate workers:
 - `wrangler versions upload --preview-alias pr-123` creates unique preview URLs
 - All previews share the same preview database
 - No manual cleanup needed - preview versions expire automatically
-- Each PR gets a unique URL like `https://pr-123-startkit-preview.blendist.workers.dev` (replace `blendist` with your Workers subdomain)
+- Each PR gets a unique URL like
+  `https://pr-123-startkit-preview.blendist.workers.dev` (replace `blendist`
+  with your Workers subdomain)
 
 ### Build Process
 
-`wrangler.jsonc` points `main` to `@tanstack/react-start/server-entry`, so the Cloudflare bundler (and the `@cloudflare/vite-plugin`) build the Worker automatically during `wrangler deploy`. Running `bun run build` manually creates the `dist/` output if you want to inspect the generated worker or serve the static client locally.
+`wrangler.jsonc` points `main` to `@tanstack/react-start/server-entry`, so the
+Cloudflare bundler (and the `@cloudflare/vite-plugin`) build the Worker
+automatically during `wrangler deploy`. Running `bun run build` manually creates
+the `dist/` output if you want to inspect the generated worker or serve the
+static client locally.
