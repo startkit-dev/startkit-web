@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { Loader2 } from "lucide-react"
-import { useState } from "react"
+import { useCallback, useState, type ComponentType } from "react"
 
 import { GithubIcon } from "@/components/icons/github-icon"
 import { Button } from "@/components/ui/button"
@@ -20,23 +20,60 @@ const authProviders = [
   }
 ]
 
+function ProviderButton({
+  name,
+  icon: Icon,
+  provider,
+  authenticatingWith,
+  onSignIn
+}: {
+  name: string
+  icon: ComponentType<{ className?: string }>
+  provider: string
+  authenticatingWith: string | null
+  onSignIn: (provider: string) => void
+}) {
+  const handleClick = useCallback(
+    () => onSignIn(provider),
+    [onSignIn, provider]
+  )
+
+  return (
+    <Button
+      variant="outline"
+      size="lg"
+      className="w-full cursor-pointer"
+      onClick={handleClick}
+      disabled={!!authenticatingWith}
+    >
+      {authenticatingWith === provider ? (
+        <Loader2 className="size-4 animate-spin" />
+      ) : (
+        <Icon className="size-4" />
+      )}
+      Continue with {name}
+    </Button>
+  )
+}
+
 function RouteComponent() {
   const [authenticatingWith, setAuthenticatingWith] = useState<string | null>(
     null
   )
 
-  async function signInWithProvider(provider: string) {
-    if (authenticatingWith) {
-      return
-    }
+  const signInWithProvider = useCallback(
+    (provider: string) => {
+      if (authenticatingWith) {
+        return
+      }
 
-    try {
       setAuthenticatingWith(provider)
-      await signIn.social({ provider })
-    } catch {
-      setAuthenticatingWith(null)
-    }
-  }
+      void signIn.social({ provider }).catch(() => {
+        setAuthenticatingWith(null)
+      })
+    },
+    [authenticatingWith]
+  )
 
   return (
     <main className="flex flex-col gap-6">
@@ -47,22 +84,15 @@ function RouteComponent() {
         </p>
       </div>
       <div className="grid gap-6">
-        {authProviders.map(({ name, icon: Icon, provider }) => (
-          <Button
-            variant="outline"
-            size="lg"
+        {authProviders.map(({ name, icon, provider }) => (
+          <ProviderButton
             key={name}
-            className="w-full cursor-pointer"
-            onClick={() => signInWithProvider(provider)}
-            disabled={!!authenticatingWith}
-          >
-            {authenticatingWith === provider ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <Icon className="size-4" />
-            )}
-            Continue with {name}
-          </Button>
+            name={name}
+            icon={icon}
+            provider={provider}
+            authenticatingWith={authenticatingWith}
+            onSignIn={signInWithProvider}
+          />
         ))}
 
         <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">

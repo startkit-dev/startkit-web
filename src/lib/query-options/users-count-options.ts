@@ -24,7 +24,7 @@ export const usersCountQueryOptions = () =>
   queryOptions({
     queryKey: ["users-count"],
     queryFn: async () => {
-      const count = await getUsersCount()
-      return count
+      const usersCount = await getUsersCount()
+      return usersCount
     }
   })

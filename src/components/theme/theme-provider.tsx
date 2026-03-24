@@ -1,7 +1,20 @@
 import { ScriptOnce } from "@tanstack/react-router"
-import { createContext, use, useEffect, useState } from "react"
+import {
+  createContext,
+  use,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from "react"
 
-type Theme = "dark" | "light" | "system"
+const validThemes = ["dark", "light", "system"] as const
+
+type Theme = (typeof validThemes)[number]
+
+function isTheme(value: string | null): value is Theme {
+  return value !== null && (validThemes as readonly string[]).includes(value)
+}
 
 const ThemeContext = createContext<{
   theme: Theme
@@ -24,17 +37,21 @@ export function ThemeProvider({
 }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window === "undefined") return defaultTheme
-    return (localStorage.getItem(storageKey) as Theme) || defaultTheme
+    const stored = localStorage.getItem(storageKey)
+    return isTheme(stored) ? stored : defaultTheme
   })
 
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme)
-    if (newTheme === "system") {
-      localStorage.removeItem(storageKey)
-    } else {
-      localStorage.setItem(storageKey, newTheme)
-    }
-  }
+  const setTheme = useCallback(
+    (newTheme: Theme) => {
+      setThemeState(newTheme)
+      if (newTheme === "system") {
+        localStorage.removeItem(storageKey)
+      } else {
+        localStorage.setItem(storageKey, newTheme)
+      }
+    },
+    [storageKey]
+  )
 
   useEffect(() => {
     const apply = () => {
@@ -56,8 +73,10 @@ export function ThemeProvider({
     }
   }, [theme])
 
+  const contextValue = useMemo(() => ({ theme, setTheme }), [theme, setTheme])
+
   return (
-    <ThemeContext value={{ theme, setTheme }}>
+    <ThemeContext value={contextValue}>
       <ScriptOnce>
         {`(() => {
           const stored = localStorage.getItem('${storageKey}');

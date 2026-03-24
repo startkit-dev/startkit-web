@@ -1,5 +1,7 @@
 /// <reference types="vite/client" />
+// eslint-disable-next-line import/no-unassigned-import -- side-effect: registers font
 import "@fontsource-variable/geist"
+// eslint-disable-next-line import/no-unassigned-import -- side-effect: registers font
 import "@fontsource-variable/geist-mono"
 import monoFont from "@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?url"
 import { type QueryClient } from "@tanstack/react-query"
