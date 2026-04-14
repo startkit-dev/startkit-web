@@ -1,151 +1,64 @@
-# CLAUDE.md
+# CRITICAL — Read first
 
-This is a TanStack Start application with React, using Bun as the package
-manager. The project is configured for Cloudflare Workers deployment and
-includes a comprehensive modern toolchain.
+- Use `bun` for everything: install, scripts, and running tests (`bun test`).
+  Reason: the project is bun-native; using npm/pnpm/yarn produces a broken
+  lockfile.
+- UI follows the shadcn/ui pattern (components copied into `src/components/ui/`)
+  but the primitive layer underneath is `@base-ui/react`, not radix-ui. Reason:
+  the project migrated off radix in commit `ca84134`. When adding or updating a
+  component, import primitives from `@base-ui/react` — never from `@radix-ui/*`.
+- Never hand-edit generated files: `src/routeTree.gen.ts`,
+  `src/db/types.gen.ts`, `worker-configuration.d.ts`. Regenerate with
+  `bun run typegen` after schema or route changes.
 
-**Key Technologies:**
-
-- TanStack Start (full-stack React framework)
-- TanStack Query for data fetching
-- Tailwind CSS 4 with shadcn/ui components
-- Bun for package management
-- TypeScript with strict configuration
-- Better-Auth for authentication with GitHub OAuth
-- Kysely query builder (via kysely-d1) on Cloudflare D1 SQLite
-- Valibot for environment variable validation
-
-## Common Commands
-
-**Development:**
+## Commands
 
 ```bash
-bun dev                 # Start development server on port 3000
-bun start               # Start production server
+bun dev                  # dev server on :3000
+bun run check            # format:check + lint + test (lint includes typecheck)
+bun run fix              # auto-fix format + lint
+bun test                 # bun's built-in test runner
+bun run db:migrate       # apply D1 migrations (local)
+bun run db:migrate:prod  # apply D1 migrations (production)
+bun run typegen          # regenerate worker + Kysely types
 ```
 
-**Code Quality:**
+## Stack conventions
 
-```bash
-bun run check           # Run all checks (format, lint, typecheck, tests)
-bun run fix             # Auto-fix formatting and linting issues
-bun run format          # Format code with oxfmt
-bun run format:check    # Check code formatting
-bun run lint            # Lint code with oxlint
-bun run lint:fix        # Auto-fix linting issues
-bun run typecheck       # Run TypeScript type checking
-bun test                # Run the test suite
-```
+- **Framework.** TanStack Start (Router + Query + Vite) deployed to Cloudflare
+  Workers. Not Next.js — do not reach for Next.js APIs (`next/*`, App Router
+  primitives, etc.).
+- **Routing.** File-based under `src/routes/`. Layout routes use `_main.tsx` /
+  `_auth.tsx` prefixes. API routes live under `src/routes/api/`. The route tree
+  is generated into `src/routeTree.gen.ts` at dev/build.
+- **Database.** Kysely on Cloudflare D1 via `kysely-d1`'s `D1Dialect` with
+  `CamelCasePlugin` registered. Write TypeScript in camelCase; SQL columns stay
+  snake_case — the plugin maps between them. Get a client from `getDb()` in
+  `src/db/client.ts`, which reads `env.DB` from `cloudflare:workers`.
+- **Migrations.** Hand-written SQL in `migrations/`. After adding or editing a
+  migration, run `bun run db:types` (or `bun run typegen`) to refresh
+  `src/db/types.gen.ts`. Types are derived by replaying migrations into a
+  scratch Bun SQLite DB via `kysely-codegen` — there is no live-DB introspection
+  step.
+- **Auth.** Better-Auth with GitHub OAuth, using its built-in Kysely D1 adapter
+  (pass `env.DB` directly). Server config in `src/lib/auth.ts`, client in
+  `src/lib/auth-client.ts`, routes mounted at `src/routes/api/auth/$.ts`.
+- **Env vars.** Validated in `src/env.ts` with Valibot. Add new variables to
+  that schema — do not read `process.env` directly elsewhere in the app.
+- **Styling.** Tailwind CSS 4 via `@tailwindcss/vite`. Global styles in
+  `src/styles/`.
+- **Imports.** Use the `@/` alias for `src/`; avoid relative paths across module
+  boundaries.
+- **Lint / format.** `oxlint` and `oxfmt` (OXC toolchain). `oxlint` runs
+  typechecking via `oxlint-tsgolint`, so there is no separate `tsc` step — don't
+  add a `typecheck` script or reach for `tsc --noEmit`. Do not introduce ESLint
+  or Prettier.
 
-**Database:**
+# CRITICAL — Read last
 
-```bash
-bun run db:migrate      # Apply database migrations (local)
-bun run db:migrate:prod # Apply database migrations (production)
-bun run db:reset        # Reset database (clean + migrate)
-```
-
-**Build & Deployment:**
-
-```bash
-bun run build           # Build for production
-bun run clean           # Clean cache directories
-bun run nuke            # Clean everything including node_modules
-```
-
-**Setup & Utilities:**
-
-```bash
-bun run setup           # Initial project setup (install, env, migrate)
-bun run outdated        # Check for package updates interactively
-bun run typegen         # Generate Cloudflare Worker types
-```
-
-## Architecture
-
-**Router Configuration:**
-
-- File-based routing with `src/routes/` directory
-- Route tree auto-generated in `src/routeTree.gen.ts`
-- Root route in `src/routes/__root.tsx` includes global providers and error
-  boundaries
-- Router configured with TanStack Query integration in `src/router.tsx`
-
-**Component Organization:**
-
-- `src/components/ui/` - shadcn/ui components
-- `src/components/layout/` - Layout components (header, footer)
-- `src/components/themes/` - Theme provider and picker
-- `src/components/errors/` - Error boundaries and not found pages
-- `src/components/dev/` - Development-only components (devtools, indicators)
-
-**Database & Authentication:**
-
-- `src/db/` - Database client and type definitions
-  - `src/db/client.ts` - Kysely database client for Cloudflare D1
-  - `src/db/types.ts` - Kysely `Database` interface describing the schema
-- `src/lib/auth.ts` - Better-Auth server configuration
-- `src/lib/auth-client.ts` - Better-Auth client utilities
-- `src/env.ts` - Environment variable validation with Valibot
-- `migrations/` - Hand-written D1 SQL migrations
-- `wrangler.jsonc` - Cloudflare Workers configuration with D1 binding
-
-**Configuration:**
-
-- `src/config/site-config.ts` - Site-wide configuration
-- `src/lib/` - Utility functions, API functions, and shared logic
-- `src/styles/` - Global CSS including Tailwind base styles
-
-**Key Patterns:**
-
-- Uses `@/` path alias for src directory
-- TanStack Query client integrated into router context
-- Theme system with system/light/dark mode support
-- Font preloading with Geist variable fonts
-- API routes in `src/routes/api/` directory
-- Better-Auth integration with GitHub OAuth provider
-- Kysely query builder on Cloudflare D1 SQLite (via kysely-d1)
-- Cloudflare Workers deployment target with D1 binding
-- Valibot schema validation for type-safe environment variables
-- Layout routes (`_main.tsx`, `_auth.tsx`) for route grouping
-
-## Development Notes
-
-**Vite Configuration:**
-
-- Target: Cloudflare Module Workers
-- Default port: 3000
-- Uses Rolldown-powered Vite with React OXC plugin for faster compilation
-- Includes TypeScript path mapping support
-- Tailwind CSS 4 integration via `@tailwindcss/vite`
-- Cloudflare plugin for SSR environment
-
-**Database Configuration:**
-
-- Kysely query builder via `kysely-d1`'s `D1Dialect`
-- Hand-written SQL migrations in `migrations/`, applied via
-  `wrangler d1 migrations apply`
-- Better-Auth uses its built-in Kysely D1 adapter (pass `env.DB` directly)
-- Local development uses Wrangler's local D1 database
-- Database binding configured as `DB` in `wrangler.jsonc`
-
-**Authentication Setup:**
-
-- Better-Auth with GitHub OAuth provider
-- Environment variables: `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`,
-  `OAUTH_GITHUB_CLIENT_ID`, `OAUTH_GITHUB_CLIENT_SECRET`
-- Auto-generated secret via `dotkit` during setup
-- API routes handle auth at `src/routes/api/auth/$.ts`
-
-**Linting & Formatting:**
-
-- OxLint for fast linting (configured in `.oxlintrc.json`)
-- OxFmt for code formatting (configured in `.oxfmtrc.jsonc`)
-- Both powered by the OXC toolchain for speed
-
-**Package Manager:**
-
-- Uses Bun for all operations
-- Lock file: `bun.lock`
-- TypeScript and React 19 compatible
-- Setup script at `bin/setup` handles initial configuration
+- Use `bun`, not `npm`/`pnpm`/`yarn`. `bun test` is the test runner — there is
+  no vitest or jest.
+- UI uses the shadcn/ui pattern with `@base-ui/react` primitives — never import
+  from `@radix-ui/*`.
+- Never edit generated files (`routeTree.gen.ts`, `db/types.gen.ts`,
+  `worker-configuration.d.ts`) — regenerate with `bun run typegen`.
