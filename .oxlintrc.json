@@ -4,31 +4,55 @@
     "eslint",
     "import",
     "jsdoc",
+    "jsx-a11y",
     "node",
     "oxc",
     "promise",
     "react",
     "react-perf",
     "typescript",
-    "unicorn",
-    "vitest"
+    "unicorn"
   ],
   "categories": {
     "correctness": "error",
+    "nursery": "off",
+    "pedantic": "off",
     "perf": "warn",
-    "suspicious": "warn",
-    "pedantic": "off"
+    "restriction": "off",
+    "style": "off",
+    "suspicious": "warn"
   },
   "rules": {
+    "eslint/curly": "warn",
+    "eslint/eqeqeq": ["error", "smart"],
+    "import/no-unassigned-import": [
+      "error",
+      {
+        "allow": ["**/*.css"]
+      }
+    ],
+    "oxc/no-rest-spread-properties": "off",
+    "react/jsx-props-no-spreading": "off",
     "react/react-in-jsx-scope": "off",
+    "typescript/ban-ts-comment": "warn",
     "typescript/no-explicit-any": "error",
-    "typescript/no-misused-promises": "warn"
+    "typescript/no-misused-promises": "error",
+    "typescript/no-unnecessary-type-arguments": "warn",
+    "typescript/no-unnecessary-type-assertion": "error",
+    "typescript/restrict-template-expressions": "warn"
   },
   "options": {
     "typeAware": true,
     "typeCheck": true
   },
+  "ignorePatterns": ["**/worker-configuration.d.ts", "**/*.gen.ts"],
   "overrides": [
+    {
+      "files": ["**/*.tsx"],
+      "rules": {
+        "eslint/func-style": "off"
+      }
+    },
     {
       "files": ["**/*.test.ts"],
       "rules": {

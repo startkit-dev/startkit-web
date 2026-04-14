@@ -12,10 +12,10 @@
     "target": "ES2022",
     "allowJs": true,
     "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "types": ["bun"],
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "noEmit": true
-  },
-  "include": ["**/*.ts", "**/*.tsx", "**/*.config.js"]
+    }
+  }
 }

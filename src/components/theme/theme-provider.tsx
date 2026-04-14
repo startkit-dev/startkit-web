@@ -36,7 +36,9 @@ export function ThemeProvider({
   storageKey?: string
 }) {
   const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === "undefined") return defaultTheme
+    if (typeof window === "undefined") {
+      return defaultTheme
+    }
     const stored = localStorage.getItem(storageKey)
     return isTheme(stored) ? stored : defaultTheme
   })
@@ -71,6 +73,7 @@ export function ThemeProvider({
       media.addEventListener("change", apply)
       return () => media.removeEventListener("change", apply)
     }
+    return undefined
   }, [theme])
 
   const contextValue = useMemo(() => ({ theme, setTheme }), [theme, setTheme])

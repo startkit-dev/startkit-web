@@ -5,12 +5,6 @@ import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 
 export default defineConfig({
-  resolve: {
-    tsconfigPaths: true
-  },
-  server: {
-    port: 3000
-  },
   plugins: [
     cloudflare({ viteEnvironment: { name: "ssr" } }),
     tanstackStart({
@@ -20,5 +14,11 @@ export default defineConfig({
     }),
     react(),
     tailwindcss()
-  ]
+  ],
+  resolve: {
+    tsconfigPaths: true
+  },
+  server: {
+    port: 3000
+  }
 })

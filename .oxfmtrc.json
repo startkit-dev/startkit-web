@@ -1,14 +1,19 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "embeddedLanguageFormatting": "auto",
   "semi": false,
   "singleQuote": false,
   "trailingComma": "none",
   "tabWidth": 2,
   "printWidth": 80,
   "proseWrap": "always",
-  "sortImports": {},
-  "sortPackageJson": true,
-  "sortTsconfig": true,
-  "sortTailwindConfig": true,
+  "sortImports": true,
+  "sortPackageJson": {
+    "sortScripts": true
+  },
+  "sortTailwindcss": {
+    "stylesheet": "./src/styles/app.css",
+    "functions": ["clsx", "cn"]
+  },
   "ignorePatterns": ["**/*.d.ts", "**/*.gen.ts"]
 }
