@@ -32,6 +32,7 @@
       }
     ],
     "oxc/no-rest-spread-properties": "off",
+    "react-perf/jsx-no-jsx-as-prop": "off",
     "react/jsx-props-no-spreading": "off",
     "react/react-in-jsx-scope": "off",
     "typescript/ban-ts-comment": "warn",

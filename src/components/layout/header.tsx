@@ -23,8 +23,8 @@ export function Header() {
           ) : session ? (
             <UserMenu user={session.user} />
           ) : (
-            <Button variant="secondary" size="sm" asChild>
-              <Link to="/login">Log in</Link>
+            <Button variant="secondary" size="sm" render={<Link to="/login" />}>
+              Log in
             </Button>
           )}
         </div>
