@@ -4,10 +4,13 @@
 bun install --frozen-lockfile
 
 # Sync the .env.example file to the .env file
-dotkit sync --target .env --source .env.example
+bun run setup-dotenv sync --target .env --source .env.example
 
 # Generate a random secret for better-auth
-dotkit secret --target .env BETTER_AUTH_SECRET
+bun run setup-dotenv secret --target .env BETTER_AUTH_SECRET
 
 # Migrate the database
 bun db:migrate
+
+# Regenerate worker-configuration.d.ts and src/db/types.gen.ts
+bun typegen
