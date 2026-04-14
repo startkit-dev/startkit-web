@@ -1,23 +1,12 @@
 import { env } from "cloudflare:workers"
-import { drizzle } from "drizzle-orm/d1"
+import { Kysely } from "kysely"
+import { D1Dialect } from "kysely-d1"
 
-import * as schema from "./schema"
+import type { Database } from "./types"
 
-/**
- * Returns a drizzle instance for the database.
- *
- * @example
- * ```ts
- * import { getDb } from "./db/client"
- * const db = getDb()
- * ```
- *
- * @returns A drizzle instance for the database.
- */
 export function getDb() {
-  return drizzle(env.DB, {
-    logger: true,
-    schema
+  return new Kysely<Database>({
+    dialect: new D1Dialect({ database: env.DB })
   })
 }
 

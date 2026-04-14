@@ -12,7 +12,7 @@ includes a comprehensive modern toolchain.
 - Bun for package management
 - TypeScript with strict configuration
 - Better-Auth for authentication with GitHub OAuth
-- Drizzle ORM with Cloudflare D1 SQLite database
+- Kysely query builder (via kysely-d1) on Cloudflare D1 SQLite
 - Valibot for environment variable validation
 
 ## Common Commands
@@ -40,11 +40,9 @@ bun test                # Run the test suite
 **Database:**
 
 ```bash
-bun run db:generate     # Generate database schema migrations
 bun run db:migrate      # Apply database migrations (local)
 bun run db:migrate:prod # Apply database migrations (production)
 bun run db:reset        # Reset database (clean + migrate)
-bun run db:studio       # Open Drizzle Studio GUI
 ```
 
 **Build & Deployment:**
@@ -83,14 +81,13 @@ bun run typegen         # Generate Cloudflare Worker types
 
 **Database & Authentication:**
 
-- `src/db/` - Database configuration and schemas
-  - `src/db/client.ts` - Drizzle database client for Cloudflare D1
-  - `src/db/schema.ts` - Database schema definitions
-  - `src/db/schemas/auth-schema.ts` - Better-Auth schema tables
+- `src/db/` - Database client and type definitions
+  - `src/db/client.ts` - Kysely database client for Cloudflare D1
+  - `src/db/types.ts` - Kysely `Database` interface describing the schema
 - `src/lib/auth.ts` - Better-Auth server configuration
 - `src/lib/auth-client.ts` - Better-Auth client utilities
 - `src/env.ts` - Environment variable validation with Valibot
-- `drizzle.config.ts` - Drizzle Kit configuration for Cloudflare D1
+- `migrations/` - Hand-written D1 SQL migrations
 - `wrangler.jsonc` - Cloudflare Workers configuration with D1 binding
 
 **Configuration:**
@@ -107,7 +104,7 @@ bun run typegen         # Generate Cloudflare Worker types
 - Font preloading with Geist variable fonts
 - API routes in `src/routes/api/` directory
 - Better-Auth integration with GitHub OAuth provider
-- Drizzle ORM with Cloudflare D1 SQLite database
+- Kysely query builder on Cloudflare D1 SQLite (via kysely-d1)
 - Cloudflare Workers deployment target with D1 binding
 - Valibot schema validation for type-safe environment variables
 - Layout routes (`_main.tsx`, `_auth.tsx`) for route grouping
@@ -125,9 +122,10 @@ bun run typegen         # Generate Cloudflare Worker types
 
 **Database Configuration:**
 
-- Drizzle ORM with Cloudflare D1 dialect
-- Migrations stored in `drizzle/migrations/`
-- D1 HTTP driver for remote database access
+- Kysely query builder via `kysely-d1`'s `D1Dialect`
+- Hand-written SQL migrations in `migrations/`, applied via
+  `wrangler d1 migrations apply`
+- Better-Auth uses its built-in Kysely D1 adapter (pass `env.DB` directly)
 - Local development uses Wrangler's local D1 database
 - Database binding configured as `DB` in `wrangler.jsonc`
 

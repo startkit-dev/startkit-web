@@ -1,14 +1,15 @@
 import { queryOptions } from "@tanstack/react-query"
 import { createServerFn } from "@tanstack/react-start"
-import { count } from "drizzle-orm"
 
 import { getDb } from "@/db/client"
-import { usersTable } from "@/db/schema"
 
 const getUsersCount = createServerFn().handler(async () => {
   const db = getDb()
-  const users = await db.select({ count: count() }).from(usersTable)
-  return users[0].count
+  const result = await db
+    .selectFrom("users")
+    .select((eb) => eb.fn.countAll<number>().as("count"))
+    .executeTakeFirstOrThrow()
+  return result.count
 })
 
 /**

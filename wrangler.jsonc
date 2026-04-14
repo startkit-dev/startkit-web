@@ -12,7 +12,7 @@
       "binding": "DB",
       "database_name": "startkit-db",
       "database_id": "0787cf91-aa72-44c7-a345-0bded2cb6c20",
-      "migrations_dir": "drizzle/migrations"
+      "migrations_dir": "migrations"
     }
   ],
   "preview_urls": true,
@@ -25,7 +25,7 @@
           "binding": "DB",
           "database_name": "startkit-preview-db",
           "database_id": "9e987c2e-f51b-4df2-82c5-2c07141d1a9c",
-          "migrations_dir": "drizzle/migrations"
+          "migrations_dir": "migrations"
         }
       ]
     }
