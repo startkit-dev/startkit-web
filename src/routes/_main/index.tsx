@@ -1,13 +1,28 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
+import { CheckIcon } from "lucide-react"
 import { Suspense } from "react"
 
 import { Wordmark } from "@/components/brand/wordmark"
 import { RefreshButton } from "@/components/refresh-button"
 import { Button } from "@/components/ui/button"
+import { siteConfig } from "@/config/site-config"
 import { serverTimeQueryOptions } from "@/lib/query-options/server-time-options"
 import { usersCountQueryOptions } from "@/lib/query-options/users-count-options"
 import { seo } from "@/lib/seo"
+
+const features = [
+  "TanStack Start on React 19",
+  "Cloudflare Workers + D1 SQLite",
+  "Kysely query builder (type-safe SQL)",
+  "Better-Auth with GitHub OAuth",
+  "Tailwind CSS 4 + shadcn/ui on Base UI",
+  "TanStack Query for data fetching",
+  "OXC toolchain: OxLint + OxFmt",
+  "Valibot-validated environment variables",
+  "Bun package manager & test runner",
+  "Strict TypeScript end-to-end"
+] as const
 
 export const Route = createFileRoute("/_main/")({
   head: () => {
@@ -25,15 +40,14 @@ function RouteComponent() {
         <div className="flex flex-row items-center gap-2">
           <Wordmark className="h-11" />
         </div>
-        <ol className="list-inside list-decimal text-left font-mono text-sm">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="rounded bg-foreground/[.05] px-1 py-0.5 font-semibold">
-              src/routes/_main/index.tsx
-            </code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+        <ul className="flex flex-col gap-2 text-left text-sm">
+          {features.map((feature) => (
+            <li key={feature} className="flex items-start gap-2">
+              <CheckIcon className="mt-0.5 size-4 shrink-0 text-primary" />
+              <span>{feature}</span>
+            </li>
+          ))}
+        </ul>
 
         <div className="flex flex-col items-center gap-4 sm:flex-row">
           <Button
@@ -41,7 +55,7 @@ function RouteComponent() {
             render={
               // oxlint-disable-next-line jsx-a11y/anchor-has-content
               <a
-                href="https://tanstack.com/router/latest/docs/framework/react/start/overview"
+                href={siteConfig.links.github}
                 rel="noopener noreferrer"
                 target="_blank"
               />
