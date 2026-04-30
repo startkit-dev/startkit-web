@@ -23,7 +23,12 @@ export function Header() {
           ) : session ? (
             <UserMenu user={session.user} />
           ) : (
-            <Button variant="secondary" size="sm" render={<Link to="/login" />}>
+            <Button
+              variant="secondary"
+              size="sm"
+              nativeButton={false}
+              render={<Link to="/login" />}
+            >
               Log in
             </Button>
           )}

@@ -25,7 +25,10 @@ export function UserMenu({ user }: Props) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Avatar className="cursor-pointer" />}>
+      <DropdownMenuTrigger
+        nativeButton={false}
+        render={<Avatar className="cursor-pointer" />}
+      >
         <AvatarImage src={user.image ?? undefined} alt={user.name} />
         <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
       </DropdownMenuTrigger>
