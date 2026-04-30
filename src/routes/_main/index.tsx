@@ -1,28 +1,13 @@
 import { useSuspenseQuery } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
-import { CheckIcon } from "lucide-react"
 import { Suspense } from "react"
 
 import { Wordmark } from "@/components/brand/wordmark"
 import { RefreshButton } from "@/components/refresh-button"
-import { Button } from "@/components/ui/button"
 import { siteConfig } from "@/config/site-config"
 import { serverTimeQueryOptions } from "@/lib/query-options/server-time-options"
 import { usersCountQueryOptions } from "@/lib/query-options/users-count-options"
 import { seo } from "@/lib/seo"
-
-const features = [
-  "TanStack Start on React 19",
-  "Cloudflare Workers + D1 SQLite",
-  "Kysely query builder (type-safe SQL)",
-  "Better-Auth with GitHub OAuth",
-  "Tailwind CSS 4 + shadcn/ui on Base UI",
-  "TanStack Query for data fetching",
-  "OXC toolchain: OxLint + OxFmt",
-  "Valibot-validated environment variables",
-  "Bun package manager & test runner",
-  "Strict TypeScript end-to-end"
-] as const
 
 export const Route = createFileRoute("/_main/")({
   head: () => {
@@ -40,30 +25,31 @@ function RouteComponent() {
         <div className="flex flex-row items-center gap-2">
           <Wordmark className="h-11" />
         </div>
-        <ul className="flex flex-col gap-2 text-left text-sm">
-          {features.map((feature) => (
-            <li key={feature} className="flex items-start gap-2">
-              <CheckIcon className="mt-0.5 size-4 shrink-0 text-primary" />
-              <span>{feature}</span>
-            </li>
-          ))}
-        </ul>
-
-        <div className="flex flex-col items-center gap-4 sm:flex-row">
-          <Button
-            variant="secondary"
-            render={
-              // oxlint-disable-next-line jsx-a11y/anchor-has-content
-              <a
-                href={siteConfig.links.github}
-                rel="noopener noreferrer"
-                target="_blank"
-              />
-            }
+        <p className="text-justify text-xl leading-relaxed text-muted-foreground">
+          A minimal starter kit for{" "}
+          <strong className="text-foreground">TanStack Start</strong> and{" "}
+          <strong className="text-foreground">React</strong> on{" "}
+          <strong className="text-foreground">Cloudflare Workers</strong>, with{" "}
+          <strong className="text-foreground">D1</strong> with{" "}
+          <strong className="text-foreground">Kysely</strong>. Pre-configured
+          with <strong className="text-foreground">Better-Auth</strong>,{" "}
+          <strong className="text-foreground">TanStack Query</strong>,{" "}
+          <strong className="text-foreground">Tailwind CSS</strong> with{" "}
+          <strong className="text-foreground">Base UI</strong>-flavored{" "}
+          <strong className="text-foreground">shadcn/ui</strong>, and the{" "}
+          <strong className="text-foreground">OXC</strong> toolchain — all
+          powered by <strong className="text-foreground">Bun</strong> and strict{" "}
+          <strong className="text-foreground">TypeScript</strong>. See more on{" "}
+          <a
+            href={siteConfig.links.github}
+            rel="noopener noreferrer"
+            target="_blank"
+            className="font-bold text-foreground underline underline-offset-4 hover:text-primary"
           >
-            Documentation
-          </Button>
-        </div>
+            Github
+          </a>
+          .
+        </p>
 
         <div className="flex items-center justify-center gap-1 text-xs">
           <span className="font-bold">Server Time:</span>
